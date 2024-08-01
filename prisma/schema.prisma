@@ -1,14 +1,92 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model autor {
+  id_autor   Int     @id @default(autoincrement())
+  nome_autor String? @db.VarChar(50)
+  descricao  String? @db.VarChar(500)
+}
+
+model carrinho {
+  id_carrinho         Int      @id @default(autoincrement())
+  id_usuario_carrinho Int?
+  id_produto_carrinho Int?
+  usuario             usuario? @relation(fields: [id_usuario_carrinho], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "carrinho_ibfk_1")
+  produto             produto? @relation(fields: [id_produto_carrinho], references: [id_produto], onDelete: Restrict, onUpdate: Restrict, map: "carrinho_ibfk_2")
+
+  @@index([id_produto_carrinho], map: "id_produto_carrinho")
+  @@index([id_usuario_carrinho], map: "id_usuario_carrinho")
+}
+
+model categoria {
+  id_categoria      Int       @id @default(autoincrement())
+  nome_categoria    String?   @db.VarChar(50)
+  id_tipo_categoria Int?
+  tipo              tipo?     @relation(fields: [id_tipo_categoria], references: [id_tipo], onDelete: Restrict, onUpdate: Restrict, map: "categoria_ibfk_1")
+  produto           produto[]
+
+  @@index([id_tipo_categoria], map: "id_tipo_categoria")
+}
+
+model favorito {
+  id_favorito         Int      @id @default(autoincrement())
+  id_usuario_favorito Int?
+  id_produto_favorito Int?
+  usuario             usuario? @relation(fields: [id_usuario_favorito], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "favorito_ibfk_1")
+  produto             produto? @relation(fields: [id_produto_favorito], references: [id_produto], onDelete: Restrict, onUpdate: Restrict, map: "favorito_ibfk_2")
+
+  @@index([id_produto_favorito], map: "id_produto_favorito")
+  @@index([id_usuario_favorito], map: "id_usuario_favorito")
+}
+
+model midia {
+  id_midia   Int       @id @default(autoincrement())
+  nome_midia String?   @db.VarChar(50)
+  produto    produto[]
+}
+
+model produto {
+  id_produto           Int        @id @default(autoincrement())
+  nome_produto         String?    @db.VarChar(50)
+  data_produto         String?    @db.VarChar(100)
+  preco_produto        String?    @db.VarChar(200)
+  descri__o            String?    @map("descrição") @db.VarChar(300)
+  autor                String?    @db.VarChar(50)
+  foto_produto         String?    @db.VarChar(300)
+  id_tipo_produto      Int?
+  id_categoria_produto Int?
+  id_midia_produto     Int?
+  carrinho             carrinho[]
+  favorito             favorito[]
+  tipo                 tipo?      @relation(fields: [id_tipo_produto], references: [id_tipo], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_1")
+  categoria            categoria? @relation(fields: [id_categoria_produto], references: [id_categoria], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_2")
+  midia                midia?     @relation(fields: [id_midia_produto], references: [id_midia], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_3")
+
+  @@index([id_categoria_produto], map: "id_categoria_produto")
+  @@index([id_midia_produto], map: "id_midia_produto")
+  @@index([id_tipo_produto], map: "id_tipo_produto")
+}
+
+model tipo {
+  id_tipo   Int         @id @default(autoincrement())
+  nome_tipo String?     @db.VarChar(50)
+  categoria categoria[]
+  produto   produto[]
+}
+
+model usuario {
+  id_usuario    Int        @id @default(autoincrement())
+  nome_usuario  String?    @db.VarChar(50)
+  email_usuario String?    @db.VarChar(100)
+  senha_usuario String?    @db.VarChar(200)
+  foto_usuario  String?    @db.VarChar(300)
+  nivel_acesso  Int?
+  carrinho      carrinho[]
+  favorito      favorito[]
 }
