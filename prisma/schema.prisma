@@ -8,9 +8,10 @@ datasource db {
 }
 
 model autor {
-  id_autor   Int     @id @default(autoincrement())
-  nome_autor String? @db.VarChar(50)
-  descricao  String? @db.VarChar(500)
+  id_autor   Int       @id @default(autoincrement())
+  nome_autor String?   @db.VarChar(50)
+  descricao  String?   @db.VarChar(500)
+  produto    produto[]
 }
 
 model carrinho {
@@ -56,21 +57,23 @@ model produto {
   nome_produto         String?    @db.VarChar(50)
   data_produto         String?    @db.VarChar(100)
   preco_produto        String?    @db.VarChar(200)
-  descri__o            String?    @map("descrição") @db.VarChar(300)
-  autor                String?    @db.VarChar(50)
+  descricao            String?    @db.VarChar(300)
   foto_produto         String?    @db.VarChar(300)
+  id_autor_produto     Int?
   id_tipo_produto      Int?
   id_categoria_produto Int?
   id_midia_produto     Int?
   carrinho             carrinho[]
   favorito             favorito[]
-  tipo                 tipo?      @relation(fields: [id_tipo_produto], references: [id_tipo], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_1")
-  categoria            categoria? @relation(fields: [id_categoria_produto], references: [id_categoria], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_2")
-  midia                midia?     @relation(fields: [id_midia_produto], references: [id_midia], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_3")
+  autor                autor?     @relation(fields: [id_autor_produto], references: [id_autor], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_1")
+  tipo                 tipo?      @relation(fields: [id_tipo_produto], references: [id_tipo], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_2")
+  categoria            categoria? @relation(fields: [id_categoria_produto], references: [id_categoria], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_3")
+  midia                midia?     @relation(fields: [id_midia_produto], references: [id_midia], onDelete: Restrict, onUpdate: Restrict, map: "produto_ibfk_4")
 
   @@index([id_categoria_produto], map: "id_categoria_produto")
   @@index([id_midia_produto], map: "id_midia_produto")
   @@index([id_tipo_produto], map: "id_tipo_produto")
+  @@index([id_autor_produto], map: "id_autor_produto")
 }
 
 model tipo {
@@ -83,7 +86,7 @@ model tipo {
 model usuario {
   id_usuario    Int        @id @default(autoincrement())
   nome_usuario  String?    @db.VarChar(50)
-  email_usuario String?    @db.VarChar(100)
+  email_usuario String?    @unique(map: "email_usuario") @db.VarChar(100)
   senha_usuario String?    @db.VarChar(200)
   foto_usuario  String?    @db.VarChar(300)
   nivel_acesso  Int?
