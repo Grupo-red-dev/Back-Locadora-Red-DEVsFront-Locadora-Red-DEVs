@@ -14,7 +14,7 @@ class Validate {
             nivel_acesso: 2,
           },
         })
-        d
+
         console.log("Novo usuario criado: ", cadastro)
         return res.json({ Status: 200, cadastro })
       })
