@@ -9,12 +9,16 @@ router.get('/', (req, res) => {
     return res.send("Ta rodando");
 })
 
-
+/* Verifications call */
 router.post('/Register', Validate.Cadastro);
 router.post('/login', Validate.login);
 
-
+/* Products call */
 router.get('/getProducts', Product.listagem_geral);
+
+router.post('/getProductsByGenres1', Product.listagem_genero1);
+router.post('/getProductsByGenres2', Product.listagem_genero2);
+
 
 
 export default router;
