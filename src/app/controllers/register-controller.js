@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 class Validate {
+  //Cadastro de novo usuario
   Cadastro(req, res) {
     try {
       bcrypt.hash(req.body.senha, 10, async (err, hash) => {
@@ -24,6 +25,7 @@ class Validate {
     }
   }
 
+  //Login de usuario
   async login(req, res) {
     try {
       const login = await db.usuario.findUnique({
@@ -32,14 +34,11 @@ class Validate {
         },
       })
       if (!login) {
-        return res.json({ Status: 404, Erro: "Email Incorreto" })
+        return res.json({ Status: 404, Erro: "Email Incorreto" });
       } else {
         bcrypt.compare(req.body.senha, login.senha_usuario, (err, result) => {
-          if (err)
-            return res.json({
-              Error: err,
-              Message: "error while comparing password",
-            })
+          if (err) return res.json({Error: err, Message: "error while comparing password"});
+
           if (result) {
             const token = jwt.sign(
               {
@@ -59,8 +58,8 @@ class Validate {
         })
       }
     } catch (error) {
-      console.log("Erro ao buscar usuario: ", error)
-      res.json({ Error: error })
+      console.log("Erro ao buscar usuario: ", error);
+      res.json({ Error: error });
     }
   }
 }
